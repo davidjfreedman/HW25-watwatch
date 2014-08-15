@@ -18,8 +18,24 @@ function padThaimeMS(number) {
     return number;
 }
 var timePassed = function(numbers) {
-  
+
 }
+
+function getRndmWithinBorders() {
+    return (Math.ceil((Math.random() * 200) + 1))
+};
+
+function CanvasWriter(location) {
+    var canvasLocation = document.querySelector(location);
+    var canvas = document.createElement("canvas");
+    var context = canvas.getContext("2d");
+
+    canvasLocation.appendChild(canvas);
+    $('canvas').addClass('.canvasDiv');
+
+    context.fillRect(0, 0, canvas.width, canvas.height);
+}
+
 function Stopwatch() {
     this.times = []; // has the newDates saved in it
     this.interval = null; // sets the interval as null to start
@@ -44,22 +60,22 @@ Stopwatch.prototype.handleClickEvents = function() {
     // Start, Pause, and Resume functions  //
     //-------------------------------------//
 
-  
+
     this.startElement.addEventListener('click', function() {
         console.log('click');
         if (!self.started && self.atZero) { // if FALSE (if it hasn’t started) and time = 0, then start anew
             self.start();
-            self.startElement.innerText = "Pause";//this.START
+            self.startElement.innerText = "Pause"; //this.START
         } else if (self.started) {
             self.pause();
-            self.startElement.innerText = "Resume";// if the watch is started, pause it
+            self.startElement.innerText = "Resume"; // if the watch is started, pause it
         } else if (!self.started && !self.atZero) {
             self.resume();
-            self.startElement.innerText = "Pause";// if not started and time != 0, resume from current time
-        }    
-         
-    }) 
-   
+            self.startElement.innerText = "Pause"; // if not started and time != 0, resume from current time
+        }
+
+    })
+
 
     //-------------------------------------//
     // stop button event listener    //
@@ -67,9 +83,9 @@ Stopwatch.prototype.handleClickEvents = function() {
 
     this.stopElement.addEventListener('click', function() {
         if (!!self.started) { // if TRUE (if the watch is started)
-            self.stop();           
+            self.stop();
         };
-        self.startElement.innerText = "Start";//this.STOP
+        self.startElement.innerText = "Start"; //this.STOP
 
     }) //it should run no matter what
 
@@ -111,6 +127,29 @@ Stopwatch.prototype.start = function() {
             self.times[1].getTime() + self.interval_window
         ); // to add time onto the saved time
         self.printElapsedTime(); //prints the newly saved time
+        // function msWATtest(ms_elapsed) {
+        //     var ms_lap = parseInt(ms_elapsed / 1000);
+        //     console.log(ms_elapsed);
+        //     return ms_elapsed - (1000 * ms_lap);
+        // }
+        //     I'd originally written this trying to get when the ms was between n9993 and n0008 (ie - between 19993 and 20008), as that fits with our interval of 16ms, but it ended up not being necessary.
+        if ($('#WAT').hasClass('.active')) {
+            (function() {
+                var ms_elapsed = (self.times[1] - self.times[0])
+                    // console.log(ms_elapsed) //testing in console
+                if (
+                    ((Number.isInteger(parseInt(ms_elapsed) / 10000)) === true)
+                    //     // if
+                    // && (msWATtest(ms_elapsed) > 9993) 
+                    // && (msWATtest(ms_elapsed) < 8)
+                    // checks if the ms is within the 15 ms window around '0' that the clock will only hit once
+                    // this is to prevent the function from returning true every interval hit during that particular second.
+                ) {
+                    console.log('Hooray')
+                    //run function
+                }
+            })()
+        }
     }, this.interval_window)
 };
 
@@ -118,6 +157,8 @@ Stopwatch.prototype.stop = function() {
     clearInterval(this.interval);
     this.started = false;
     this.atZero = true; //keeps the clock at the current time, but resets it when start is pressed
+    $('#WAT').removeClass('.active');
+
 };
 
 
@@ -144,7 +185,16 @@ Stopwatch.prototype.reset = function() {
     this.times[1] = new Date(); //putting in new dates, otherwise it still grabs from the old ones
     this.html_element.innerText = ("00:00:00:000");
 };
-Stopwatch.prototype.wat = function() {};
+Stopwatch.prototype.wat = function() {
+    $('#WAT').toggleClass('.active');
+    var self = this;
+
+    // integerTest(this.times[1], this.times[0]);
+    // console.log(((this.times[1] - this.times[0]) / 1000) / 10)
+    // 2. gets time till next '0'
+    // (if next 0 less than 1)
+    // 3. when time= x0, enact canvas layer x 3 in random places
+};
 
 
 //-------------------------------------//
@@ -201,4 +251,7 @@ Stopwatch.prototype.printElapsedTime = function() {
 
 function app() {
     var watch = new Stopwatch();
+    CanvasWriter('.canvasLocation1');
+    CanvasWriter('.canvasLocation2');
+
 }
